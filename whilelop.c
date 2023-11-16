@@ -1,95 +1,24 @@
 #include "naomi.h"
 /**
- * fork_cmd - Forking  executed thread to run cmd
- * @info:  para and  return details to  struct
- * Return: nothing
- */
-
-void fork_cmd(info_t *info)
-{
-	pid_t child_pid;
-
-	child_pid = fork();
-	if (child_pid == -1)
-	{
-		/* TODO: ERR FUNCTION */
-		perror("Error:");
-		return;
-	}
-	if (child_pid == 0)
-	{
-		if (execve(info->path, info->argv, get_environ(info)) == -1)
-		{
-			free_info(info, 1);
-			if (errno == EACCES)
-				exit(126);
-			exit(1);
-		}
-		/* TODO:  ERRO  FUNCTION */
-	}
-	else
-	{
-		wait(&(info->status));
-		if (WIFEXITED(info->status))
-		{
-			info->status = WEXITSTATUS(info->status);
-			if (info->status == 126)
-				print_error(info, "Permission denied\n");
-		}
-	}
-}
-/**
- * find_builtin - tracks  builtin commands
- * @info: par and return info struct
- * Return: -1 if builtin not found,
- * 0  if successful, when builtin located
- * 1 if unsuccesful ,where builtin fails
- * 2 returns on  exit.
- */
-int find_builtin(info_t *info)
-{
-	int b, built_in_ret = -1;
-	builtin_table builtintbl[] = {
-		{"exit", _myexit},
-		{"env", _myenv},
-		{"help", _myhelp},
-		{"history", _myhistory},
-		{"setenv", _mysetenv},
-		{"unsetenv", _myunsetenv},
-		{"cd", _mycd},
-		{"alias", _myalias},
-		{NULL, NULL}
-	};
-
-	for (b = 0; builtintbl[b].type; b++)
-		if (_strcmp(info->argv[0], builtintbl[b].type) == 0)
-		{
-			info->line_count++;
-			built_in_ret = builtintbl[b].func(info);
-			break;
-		}
-	return (built_in_ret);
-}
-/**
- * hsh - execution of  shell loop
- * @info: Parameters and returns details to struct
- * @av: Arg vect
+ * hsh - shell loop 
+ * @info: info struct
+ * @av: Arg vec
  *
- * Return: success
+ * Return: Success 0, error 1 or error code
  */
 int hsh(info_t *info, char **av)
 {
-	ssize_t m = 0;
+	ssize_t s = 0;
 	int builtin_ret = 0;
 
-	while (m != -1 && builtin_ret != -2)
+	while (s != -1 && builtin_ret != -2)
 	{
 		clear_info(info);
 		if (interactive(info))
 			_puts("$ ");
 		_eputchar(BUF_FLUSH);
-		m = get_input(info);
-		if (m != -1)
+		s = get_input(info);
+		if (s != -1)
 		{
 			set_info(info, av);
 			builtin_ret = find_builtin(info);
@@ -112,16 +41,51 @@ int hsh(info_t *info, char **av)
 	}
 	return (builtin_ret);
 }
-/**
- * find_cmd - monitors commands in PATH
- * @info: parameters and returns info struct
- * Return: null
- */
 
+/**
+ * find_builtin - builtin comnd
+ * @info: par & return inf struct
+ *
+ * Return: -1 if builtin not found,
+ * 0  on success,when builtin found
+ * 1 on failure,when builtin fails
+ * 2 on exit.
+ */
+int find_builtin(info_t *info)
+{
+	int u, built_in_ret = -1;
+	builtin_table builtintbl[] = {
+		{"exit", _myexit},
+		{"env", _myenv},
+		{"help", _myhelp},
+		{"history", _myhistory},
+		{"setenv", _mysetenv},
+		{"unsetenv", _myunsetenv},
+		{"cd", _mycd},
+		{"alias", _myalias},
+		{NULL, NULL}
+	};
+
+	for (u = 0; builtintbl[u].type; u++)
+		if (_strcmp(info->argv[0], builtintbl[u].type) == 0)
+		{
+			info->line_count++;
+			built_in_ret = builtintbl[u].func(info);
+			break;
+		}
+	return (built_in_ret);
+}
+
+/**
+ * find_cmd - Locate comnd in PATH
+ * @info: par & return inf struct
+ *
+ * Return: Void
+ */
 void find_cmd(info_t *info)
 {
 	char *path = NULL;
-	int b, d;
+	int t, o;
 
 	info->path = info->argv[0];
 	if (info->linecount_flag == 1)
@@ -129,10 +93,10 @@ void find_cmd(info_t *info)
 		info->line_count++;
 		info->linecount_flag = 0;
 	}
-	for (b = 0, d = 0; info->arg[b]; b++)
-		if (!is_delim(info->arg[b], " \t\n"))
-			d++;
-	if (!d)
+	for (t = 0, o = 0; info->arg[t]; t++)
+		if (!is_delim(info->arg[t], " \t\n"))
+			o++;
+	if (!o)
 		return;
 
 	path = find_path(info, _getenv(info, "PATH="), info->argv[0]);
@@ -153,3 +117,45 @@ void find_cmd(info_t *info)
 		}
 	}
 }
+
+/**
+ * fork_cmd - Fork exec thread run cmd
+ * @info:  par & return inf struct
+ *
+ * Return: Void
+ */
+void fork_cmd(info_t *info)
+{
+	pid_t child_pid;
+
+	child_pid = fork();
+	if (child_pid == -1)
+	{
+		/* TODO: ERROR FUNCTION */
+		perror("Error:");
+		return;
+	}
+	if (child_pid == 0)
+	{
+		if (execve(info->path, info->argv, get_environ(info)) == -1)
+		{
+			free_info(info, 1);
+			if (errno == EACCES)
+				exit(126);
+			exit(1);
+		}
+		/* TODO:  ERROR FUNCTION */
+	}
+	else
+	{
+		wait(&(info->status));
+		if (WIFEXITED(info->status))
+		{
+			info->status = WEXITSTATUS(info->status);
+			if (info->status == 126)
+				print_error(info, "Permission denied\n");
+		}
+	}
+}
+
+
