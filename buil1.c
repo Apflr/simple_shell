@@ -1,15 +1,16 @@
 #include "naomi.h"
 /**
- * _myexit - end of  shell
- * @info: Structure holding argument$ for maintaing
- * Return: ending  with given exit status
+ * _myexit - exit commandline
+ * @info: Struc having potential arguments. 
+ * constant function prototype.
+ * Return: exits  given exit status
  * (0) if info.argv[0] != "exit"
  */
 int _myexit(info_t *info)
 {
 	int exitcheck;
 
-	if (info->argv[1]) /* If there is an exit arguement */
+	if (info->argv[1]) 
 	{
 		exitcheck = _erratoi(info->argv[1]);
 		if (exitcheck == -1)
@@ -28,9 +29,10 @@ int _myexit(info_t *info)
 }
 
 /**
- * _mycd - appends online files for the process
- * @info: Structure holds arguments. Used for maintaining
- * Return: Always success
+ * _mycd - directs working directory for the process
+ * @info: Strt having potential arguments. Used for holding
+ * constant function prototype.
+ * Return: 0 Success
  */
 int _mycd(info_t *info)
 {
@@ -44,7 +46,7 @@ int _mycd(info_t *info)
 	{
 		dir = _getenv(info, "HOME=");
 		if (!dir)
-			chdir_ret = /* TODO: what should this be? */
+			chdir_ret = 
 				chdir((dir = _getenv(info, "PWD=")) ? dir : "/");
 		else
 			chdir_ret = chdir(dir);
@@ -58,7 +60,7 @@ int _mycd(info_t *info)
 			return (1);
 		}
 		_puts(_getenv(info, "OLDPWD=")), _putchar('\n');
-		chdir_ret = /* TODO: what should this be? */
+		chdir_ret = 
 			chdir((dir = _getenv(info, "OLDPWD=")) ? dir : "/");
 	}
 	else
@@ -77,9 +79,10 @@ int _mycd(info_t *info)
 }
 
 /**
- * _myhelp - appends  current folders of the flow
- * @info: Structure withholding potential arguments.
- * Return: succesfully
+ * _myhelp - modifies having dir of the process
+ * @info: Structure having  potential arguments. Used for holding
+ * constant function prototype.
+ * Return:  0 Success
  */
 int _myhelp(info_t *info)
 {
@@ -88,6 +91,6 @@ int _myhelp(info_t *info)
 	arg_array = info->argv;
 	_puts("help call works. Function not yet implemented \n");
 	if (0)
-		_puts(*arg_array); /* temp att_unused workaround */
+		_puts(*arg_array); 
 	return (0);
 }
