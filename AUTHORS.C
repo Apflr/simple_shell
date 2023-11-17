@@ -1,4 +1,3 @@
-PROJECT DONE BY
-DUNCAN CHIRCHIR
-NAOMI KARIUKI
-
+This project done by 
+NAOMI KARIUKI (springnaomi6@gmail.com)
+DUNCAN CHIRCHIR (chirchirduncan@outlook.com)
