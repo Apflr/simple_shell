@@ -1,9 +1,10 @@
 #include "naomi.h"
 /**
- * _myhistory - prints out  files list,in  one command by line, preceded
- * @info: Structure holding  arguments. Used for withholding
- *        constant funct prototype.
- *  Return: Always 0 Success
+ * _myhistory - Show the history list with each command on a separate line,
+ * prefaced by line numbers starting from 0.
+ * @info: Structure possibly holding arguments 
+ * to ensure a consistent function prototype.
+ *  Return: Always 0 for success
  */
 int _myhistory(info_t *info)
 {
@@ -12,32 +13,33 @@ int _myhistory(info_t *info)
 }
 
 /**
- * unset_alias - set$ friend to the string
- * @info: parameter structure
- * @str: alias string
- * Return: 0 Success, 1 on error
+ * unset_alias - Removes an alias associated with the provided string
+ * @info: Parameter structure
+ * @str: String representing the alias to remove
+ * Return: Returns 0 upon success, 1 on error
  */
 int unset_alias(info_t *info, char *str)
 {
-	char *p, d;
+	char *p, c;
 	int ret;
 
 	p = _strchr(str, '=');
 	if (!p)
 		return (1);
-	d = *p;
+	c = *p;
 	*p = 0;
 	ret = delete_node_at_index(&(info->alias),
 		get_node_index(info->alias, node_starts_with(info->alias, str, -1)));
-	*p = d;
+	*p = c;
 	return (ret);
 }
 
 /**
- * set_alias - sets alias to the strings
- * @info: parameter to structure
- * @str: strn freind
- * Return: 0 success, 1 on error
+ * set_alias - Sets an alias given string
+ * @info: Parameter structure
+ * @str: String represt an alias
+ *
+ * Return: Always 0, 1 on error
  */
 int set_alias(info_t *info, char *str)
 {
@@ -54,9 +56,10 @@ int set_alias(info_t *info, char *str)
 }
 
 /**
- * print_alias - prints an alias of the string 
- * @node: the node representing the alias
- * Return: 0 on success, 1 on error
+ * print_alias - Prints an alias from node
+ * @node: Aliasnodde
+ *
+ * Return: Always 0 success, 1 on error
  */
 int print_alias(list_t *node)
 {
@@ -76,15 +79,14 @@ int print_alias(list_t *node)
 }
 
 /**
- * _myalias - Emulates the functionality of the
- * built-in 'alias' command (see 'man alias')
- * @info: Structure holding possible arguments, 
- * ensuring a consistent function prototype
- *  Return: 0 on Success
+ * _myalias - imitates the alias builtin (man alias)
+ * @info: Structure containing potential arguments. Used to maintain
+ *        a const func prot.
+ *  Return: Always 0 for succe
  */
 int _myalias(info_t *info)
 {
-	int r = 0;
+	int h = 0;
 	char *p = NULL;
 	list_t *node = NULL;
 
@@ -98,13 +100,13 @@ int _myalias(info_t *info)
 		}
 		return (0);
 	}
-	for (r = 1; info->argv[r]; r++)
+	for (h = 1; info->argv[h]; h++)
 	{
-		p = _strchr(info->argv[r], '=');
+		p = _strchr(info->argv[h], '=');
 		if (p)
-			set_alias(info, info->argv[r]);
+			set_alias(info, info->argv[h]);
 		else
-			print_alias(node_starts_with(info->alias, info->argv[r], '='));
+			print_alias(node_starts_with(info->alias, info->argv[h], '='));
 	}
 
 	return (0);
